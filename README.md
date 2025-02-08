@@ -1,1 +1,4 @@
-# WiNGHacks2025_Project
+# Machine Larning Handwriting App
+## Jaidyn Holt and Celia Mercier
+## WiNG Hacks 2025 Project
+
