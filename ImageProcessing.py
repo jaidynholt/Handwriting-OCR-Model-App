@@ -1,5 +1,5 @@
 import torch
-import nltkScraper
+from nltkScraper import pos_dict2
 from PIL import Image
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 from textblob import TextBlob
@@ -24,12 +24,15 @@ def ocr(image, processor, model):
     return generated_text
 
 
-# Load the specific image
-image_path = 'deskewed.jpg'
-image = read_image(image_path)
-
-# Perform OCR
-text = ocr(image, processor, model)
+def filter_text(image_path):
+    image = read_image(image_path)
+    text = ocr(image, processor, model)
+    final_text = ""
+    for char in text:
+        if char not in ("(", ")", ".", "\""):
+            final_text += char
+    print("Message:", final_text, "\n")
+    return final_text
 
 
 def spellcheck(text_to_correct):
@@ -39,7 +42,7 @@ def spellcheck(text_to_correct):
 
 
 # Print the OCR result in the terminal
-print("OCR Result: ", text)
+# print("OCR Result: ", text)
 
 
 def sort_by_pos(text_to_sort):
@@ -58,13 +61,15 @@ def sort_by_pos(text_to_sort):
 
     # Print each part of speech tag followed by the words that belong to that tag
     for pos in pos_dict:
-        print(f"{pos}:")
+        definition = pos_dict2.get(pos)
+        print(f"{pos} ({definition}): ")
         print(", ".join(pos_dict[pos]))
         print()
 
+
 # Sort and display the POS tags with their corresponding words
-sort_by_pos(text)
-
-
+# sort_by_pos(text)
+stringy = filter_text("deskewed.jpg")
+sort_by_pos(stringy)
 
 

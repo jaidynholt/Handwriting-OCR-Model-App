@@ -86,5 +86,5 @@ def output_final(image_path):
     cv2.waitKey(0)
 
 
-output_final("ringofloor.png")
+output_final("rudy_new.png")
 
