@@ -4,6 +4,7 @@ from PIL import Image
 import cv2
 #import os for file saving
 import os
+import ImageProcessing as ip
 
 LARGEFONT =("Verdana", 35)
 RELATIVEFILEPATH = "photos"
@@ -46,17 +47,27 @@ class App(ctk.CTk):
     def switchFrame(self, pageClass):
         frame = self.pages[pageClass]
         frame.tkraise()
+        # if taking the photo, call the photo functions
         if (pageClass == Page1):
             self.TakePhoto(RELATIVEFILEPATH, FILENAME)
             self.pages[Page2].DisplayPicture(RELATIVEFILEPATH, FILENAME)
             self.switchFrame(Page2)
-
+        # if photo confirmed, run the OCR
+        if (pageClass == Page3):
+            text = self.runOCR()
+            self.pages[Page3].SetText(text)
 
     def TakePhoto(self, relativefilepath, filename):
         # the arg is the countdown time
         imageCapture = ImageCapture(5, relativefilepath, filename)
         # take the photo, returns the photo, or if the user exited, returns -1
         imageCapture.TakePhoto()
+
+    def RunOCR(self, relativefilepath, filename):
+        return ip.filter_text(os.getcwd() + os.sep + relativefilepath + os.sep + "new_"+filename)
+    
+    def RunPartsSpeech(self, string):
+        ip.sort_by_pos(string)
 
 
 
@@ -123,17 +134,20 @@ class Page2(ctk.CTkFrame):
         # the divisions of the full frame
         frameInnerTop = ctk.CTkFrame(frame, width=200, height=200)
         frameInnerBottom = ctk.CTkFrame(frame, width=200, height=200)
-        frameInnerTop.grid(row=0, column=0, sticky="ew")
-        frameInnerBottom.grid(row=1, column=0,sticky="ew")
+        frameInnerBottom.grid_columnconfigure(0, weight=1)
+        frameInnerBottom.grid_columnconfigure(1, weight=1)    
+        frameInnerBottom.grid_columnconfigure(2, weight=1)
+        frameInnerTop.grid(row=0, column=0, sticky="nsew", columnspan=3)
+        frameInnerBottom.grid(row=1, column=0,sticky="nsew")
 
         # display the new image
         self.imageLabel = ctk.CTkLabel(frameInnerTop, text="")
         self.imageLabel.pack()
 
         # buttons for image
-        retakeButton = ctk.CTkButton(frameInnerBottom, text="Retake", command=lambda : controller.switchFrame(Page2))
-        confirmButton = ctk.CTkButton(frameInnerBottom, text="Confirm", command=lambda : controller.switchFrame(Page2))
-        cancelButton = ctk.CTkButton(frameInnerBottom, text="Cancel", command=lambda : controller.switchFrame(Page2))
+        retakeButton = ctk.CTkButton(frameInnerBottom, text="Retake", command=lambda : controller.switchFrame(Page1))
+        confirmButton = ctk.CTkButton(frameInnerBottom, text="Confirm", command=lambda : controller.switchFrame(Page3))
+        cancelButton = ctk.CTkButton(frameInnerBottom, text="Cancel", command=lambda : controller.switchFrame(Page0))
         retakeButton.grid(row=0, column=0)
         confirmButton.grid(row=0, column=1, padx=10)
         cancelButton.grid(row=0, column=2) 
@@ -141,9 +155,9 @@ class Page2(ctk.CTkFrame):
     def DisplayPicture(self, relativeFilepath, filename):
         # load image
         os.getcwd()
-        photo = ctk.CTkImage(light_image=Image.open(os.getcwd() + os.sep + relativeFilepath + os.sep + filename),
-                             dark_image=Image.open(os.getcwd() + os.sep + relativeFilepath + os.sep + filename),
-                             size=(600, 600))
+        photo = ctk.CTkImage(light_image=Image.open(os.getcwd() + os.sep + relativeFilepath + os.sep + "new_"+filename),
+                             dark_image=Image.open(os.getcwd() + os.sep + relativeFilepath + os.sep + "new_"+filename),
+                             size=(800, 600))
         self.imageLabel.configure(image=photo)
 
 
@@ -153,24 +167,9 @@ class Page3(ctk.CTkFrame):
         ctk.CTkFrame.__init__(self, parent)
         label = ctk.CTkLabel(self, text ="Page 2", font = LARGEFONT)
         label.grid(row = 0, column = 4, padx = 10, pady = 10)
-  
-        # button to show frame 2 with text
-        # layout2
-        button1 = ctk.CTkButton(self, text ="Page 1",
-                            command = lambda : controller.switchFrame(Page1))
-     
-        # putting the button in its place by 
-        # using grid
-        button1.grid(row = 1, column = 1, padx = 10, pady = 10)
-  
-        # button to show frame 3 with text
-        # layout3
-        button2 = ctk.CTkButton(self, text ="Startpage",
-                            command = lambda : controller.switchFrame(Page0))
-     
-        # putting the button in its place by
-        # using grid
-        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+
+    def SetText(self, newText):
+        self.label.configure(text=newText)
 
 # standard styles for widgets
 def HeaderText(app, text):

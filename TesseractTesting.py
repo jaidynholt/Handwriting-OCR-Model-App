@@ -85,7 +85,7 @@ def output_final(image_path):
 
     # Apply additional cropping
     final_cropped = lil_extra_crop(cropped_paper)
-
+    return final_cropped
     # Save and show images
     cv2.imwrite("final_output.jpg", final_cropped)
     cv2.imshow("Deskewed Image", deskewed_image)

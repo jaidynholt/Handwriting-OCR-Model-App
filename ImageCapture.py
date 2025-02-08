@@ -6,6 +6,7 @@ import time
 import os
 # for getting screen size
 from win32api import GetSystemMetrics
+import TesseractTesting as tt
 
 # class for accessing the camera, taking an image,
 # and manipulating the data to be un-mirrored and cropped properly
@@ -35,6 +36,8 @@ class ImageCapture:
         self.Countdown(camera)
         #userOption = self.DisplayFrame()
         self.SaveFrame()
+        newFrame = tt.output_final(os.getcwd() + os.sep + self.filepathFolder + os.sep + self.filename)
+        self.SaveNewFrame(newFrame)
 
         # release camera and end
         camera.release()
@@ -110,6 +113,14 @@ class ImageCapture:
         os.chdir(os.getcwd() + os.sep + self.filepathFolder)
         # write the frame there
         cv2.imwrite(self.filename, self.frame)
+        # change back the directory
+        os.chdir('..')
+
+    def SaveNewFrame(self, frame):
+        #change directories to where to save the file
+        os.chdir(os.getcwd() + os.sep + self.filepathFolder)
+        # write the frame there
+        cv2.imwrite("new_"+self.filename, frame)
         # change back the directory
         os.chdir('..')
 

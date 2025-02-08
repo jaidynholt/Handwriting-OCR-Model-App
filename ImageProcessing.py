@@ -1,4 +1,4 @@
-import torch
+#import torch
 from nltkScraper import pos_dict2
 from PIL import Image
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
