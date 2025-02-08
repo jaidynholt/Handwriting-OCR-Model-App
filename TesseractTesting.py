@@ -65,31 +65,33 @@ def deskew_image(image_path):
     else:
         rotated = image  # No lines found
 
-    h, w = rotated.shape[:2]
-    crop_x = int(w*.01)
-    crop_y = int(h*.15)
+    return rotated
 
-    cropped = rotated[crop_y:h - crop_y, crop_x:w - crop_x]
 
+def lil_extra_crop(image):
+    h, w = image.shape[:2]
+    crop_x = int(w * 0.05)  # Crop 1% from the sides
+    crop_y = int(h * 0.20)  # Crop 15% from the top and bottom
+
+    cropped = image[crop_y:h - crop_y, crop_x:w - crop_x]
     return cropped
-
-def lil_extra_crop(image)
 
 
 def output_final(image_path):
     deskewed_image = deskew_image(image_path)
-    cv2.imwrite("deskewed.jpg", deskewed_image)
 
     contrasted_image = increase_contrast(deskewed_image)
-    cv2.imshow("contrast_enhanced.jpg", contrasted_image)
-
     cropped_paper = extract_lined_paper(contrasted_image)
-    cv2.imshow("cropped_paper.jpg", cropped_paper)
 
+    # Apply additional cropping
+    final_cropped = lil_extra_crop(cropped_paper)
 
-    cv2.imshow("Final Output", cropped_paper)
+    # Save and show images
+    cv2.imwrite("final_output.jpg", final_cropped)
+    cv2.imshow("Deskewed Image", deskewed_image)
+    cv2.imshow("Contrast Enhanced", contrasted_image)
+    cv2.imshow("Final Output", final_cropped)
     cv2.waitKey(0)
 
-
-output_final("rudy_new.png")
+output_final("photos\\rudy_new.png")
 

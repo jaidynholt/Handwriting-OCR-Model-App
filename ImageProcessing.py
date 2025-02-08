@@ -29,7 +29,7 @@ def filter_text(image_path):
     text = ocr(image, processor, model)
     final_text = ""
     for char in text:
-        if char not in ("(", ")", ".", "\""):
+        if char.isalpha() or char.isspace() or char.isdigit():
             final_text += char
     print("Message:", final_text, "\n")
     return final_text
@@ -69,7 +69,7 @@ def sort_by_pos(text_to_sort):
 
 # Sort and display the POS tags with their corresponding words
 # sort_by_pos(text)
-stringy = filter_text("deskewed.jpg")
+stringy = filter_text("final_output.jpg")
 sort_by_pos(stringy)
 
 
