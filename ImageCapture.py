@@ -2,18 +2,25 @@
 import cv2
 # import time lib for countdown
 import time
+#import os for file saving
+import os
 
 # class for accessing the camera, taking an image,
 # and manipulating the data to be un-mirrored and cropped properly
 class ImageCapture:
     # class attributes
     countdownTime = 2
+    filepath = ""
+    filename = ""
+    frame = None
     # constructor
-    def __init__(self, countdownTime):
+    def __init__(self, countdownTime, filepath, filename):
         # Check OpenCV version
         print("OpenCV version: ", cv2.__version__)
         # initialize class variable
         self.countdownTime = countdownTime
+        self.filepath = filepath
+        self.filename = filename
 
     def TakePhoto(self):
         # create video capture object; arg1: device index or name of video file
@@ -27,11 +34,12 @@ class ImageCapture:
         userOption = -1
         while True:
             # take the frame
-            frame = self.GetFrame(camera)
+            self.GetFrame(camera)
             # display the frame
-            userOption = self.DisplayFrame(frame)
+            userOption = self.DisplayFrame()
             if (userOption == 1):
-                return frame
+                self.SaveFrame()
+                return
             elif userOption == 3:
                 print("Bye!")
                 exit()
@@ -54,18 +62,17 @@ class ImageCapture:
                 totalTime = 0.0     # reset
             totalTime += time.time() - startTime
         # access camera
-        success, frame = camera.read()
+        success, self.frame = camera.read()
         # if frame is not read correctly
         if not success:
             print("ERROR: Could not receive frame.")
             return
         print("...CAPTURED")
-        return frame
     
-    def DisplayFrame(self, frame):
+    def DisplayFrame(self):
         print("Displaying image")
         print("Press 'y' to confirm, 'r' to retake, 'n' to exit")
-        cv2.imshow('frame', frame)
+        cv2.imshow('frame', self.frame)
         # wait for enter key to be pressed
         while True:
             keyPressed = cv2.waitKey(0)
@@ -75,5 +82,11 @@ class ImageCapture:
                 return 2
             elif keyPressed == ord('n'):
                 return 3
+            
+    def SaveFrame(self):
+        #change directories to where to save the file
+        os.chdir(self.filepath)
+        # write the frame there
+        cv2.imwrite(self.filename, self.frame)
 
     
