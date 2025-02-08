@@ -70,8 +70,8 @@ def deskew_image(image_path):
 
 def lil_extra_crop(image):
     h, w = image.shape[:2]
-    crop_x = int(w * 0.05)  # Crop 1% from the sides
-    crop_y = int(h * 0.20)  # Crop 15% from the top and bottom
+    crop_x = int(w * 0.15)  # Crop 1% from the sides
+    crop_y = int(h * 0.25)  # Crop 15% from the top and bottom
 
     cropped = image[crop_y:h - crop_y, crop_x:w - crop_x]
     return cropped
@@ -93,5 +93,5 @@ def output_final(image_path):
     cv2.imshow("Final Output", final_cropped)
     cv2.waitKey(0)
 
-output_final("photos\\rudy_new.png")
+output_final("photos\\imagecapture.jpg")
 
