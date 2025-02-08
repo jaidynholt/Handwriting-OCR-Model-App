@@ -4,6 +4,8 @@ import cv2
 import time
 #import os for file saving
 import os
+# for getting screen size
+from win32api import GetSystemMetrics
 
 # class for accessing the camera, taking an image,
 # and manipulating the data to be un-mirrored and cropped properly
@@ -57,14 +59,16 @@ class ImageCapture:
             cv2.putText(
                 videoFrame,
                 str(countdownNum),  # text
-                (0,0),  # position of bottom left corner
+                (20,120),  # position of bottom left corner
                 cv2.FONT_HERSHEY_PLAIN, # font
-                3,  # font scale
-                (255,255,255,100),    # color: transparent white
-                2,  # line thickness
+                10,  # font scale
+                (17,32,43),    # color: transparent white
+                5,  # line thickness
                 cv2.LINE_AA # line type
             )
-            cv2.imshow('frame', videoFrame)
+            cv2.namedWindow("VideoFeed", cv2.WINDOW_NORMAL)
+            cv2.resizeWindow("VideoFeed", (int)(GetSystemMetrics(0)*0.7), (int)(GetSystemMetrics(1)*0.8))
+            cv2.imshow('VideoFeed', videoFrame)
             cv2.waitKey(1)
             # decrement countdown
             if totalTime >= 1.0 and countdownNum > 0:
