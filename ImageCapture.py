@@ -109,19 +109,9 @@ class ImageCapture:
                 return 3
             
     def SaveFrame(self):
-        #change directories to where to save the file
-        os.chdir(os.getcwd() + os.sep + self.filepathFolder)
-        # write the frame there
-        cv2.imwrite(self.filename, self.frame)
-        # change back the directory
-        os.chdir('..')
+        cv2.imwrite(os.getcwd() + os.sep + self.filepathFolder + os.sep + self.filename, self.frame)
 
     def SaveNewFrame(self, frame):
-        #change directories to where to save the file
-        os.chdir(os.getcwd() + os.sep + self.filepathFolder)
-        # write the frame there
-        cv2.imwrite("new_"+self.filename, frame)
-        # change back the directory
-        os.chdir('..')
+        cv2.imwrite(os.getcwd() + os.sep + self.filepathFolder + os.sep + "new_"+self.filename, frame)
 
     

@@ -8,7 +8,6 @@ import nltk
 processor = TrOCRProcessor.from_pretrained('microsoft/trocr-base-handwritten', use_fast=False)
 model = VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-base-handwritten')
 
-
 def read_image(image_path):
     image = Image.open(image_path).convert('RGB')
     return image
@@ -60,6 +59,7 @@ def sort_by_pos(text_to_sort):
         pos_dict[pos].append(word)
 
     # Print each part of speech tag followed by the words that belong to that tag
+    return (pos_dict, pos_dict2)
     for pos in pos_dict:
         definition = pos_dict2.get(pos)
         print(f"{pos} ({definition}): ")
@@ -69,7 +69,7 @@ def sort_by_pos(text_to_sort):
 
 # Sort and display the POS tags with their corresponding words
 # sort_by_pos(text)
-stringy = filter_text("final_output.jpg")
-sort_by_pos(stringy)
-
+#stringy = filter_text("final_output.jpg")
+#sort_by_pos(stringy)
+#nltk.download('averaged_perceptron_tagger_eng')
 

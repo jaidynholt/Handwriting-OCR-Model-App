@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 
 
 def extract_lined_paper(image):
@@ -68,13 +69,16 @@ def deskew_image(image_path):
     return rotated
 
 
-def lil_extra_crop(image):
+def lil_extra_crop(image_path):
+    image = cv2.imread(image_path)
     h, w = image.shape[:2]
     crop_x = int(w * 0.05)  # Crop 1% from the sides
     crop_y = int(h * 0.20)  # Crop 15% from the top and bottom
 
     cropped = image[crop_y:h - crop_y, crop_x:w - crop_x]
-    return cropped
+    # write the frame there
+    cv2.imwrite(image_path, cropped)
+    #return cropped
 
 
 def output_final(image_path):
@@ -84,8 +88,8 @@ def output_final(image_path):
     cropped_paper = extract_lined_paper(contrasted_image)
 
     # Apply additional cropping
-    final_cropped = lil_extra_crop(cropped_paper)
-    return final_cropped
+    # final_cropped = lil_extra_crop(cropped_paper)
+    return cropped_paper
     # Save and show images
     cv2.imwrite("final_output.jpg", final_cropped)
     cv2.imshow("Deskewed Image", deskewed_image)
@@ -93,5 +97,5 @@ def output_final(image_path):
     cv2.imshow("Final Output", final_cropped)
     cv2.waitKey(0)
 
-output_final("photos\\rudy_new.png")
+#output_final("photos\\rudy_new.png")
 
