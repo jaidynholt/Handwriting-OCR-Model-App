@@ -2,10 +2,9 @@ import cv2
 import numpy as np
 
 
-def extract_lined_paper(image_path):
-    image = cv2.imread(image_path)
+def extract_lined_paper(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    lower_white = np.array([0, 0, 180], dtype=np.uint8)
+    lower_white = np.array([0, 0, 190], dtype=np.uint8)
     upper_white = np.array([180, 50, 255], dtype=np.uint8)
 
     mask = cv2.inRange(hsv, lower_white, upper_white)
@@ -31,11 +30,12 @@ def extract_lined_paper(image_path):
     return cropped
 
 
-def increase_contrast(image, alpha=1.5, beta=0):
+def increase_contrast(image, alpha=1.3, beta=0):
     return cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
 
 
-def deskew_image(image):
+def deskew_image(image_path):
+    image = cv2.imread(image_path)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
 
@@ -65,24 +65,29 @@ def deskew_image(image):
     else:
         rotated = image  # No lines found
 
-    # Crop 20% equally from all sides
     h, w = rotated.shape[:2]
-    crop_x = int(w*.001)  # 20% of width
-    crop_y = int(h*.15)  # 20% of height
+    crop_x = int(w*.01)
+    crop_y = int(h*.15)
 
     cropped = rotated[crop_y:h - crop_y, crop_x:w - crop_x]
 
     return cropped
 
+def lil_extra_crop(image)
+
 
 def output_final(image_path):
-    cropped_paper = extract_lined_paper(image_path)
-    cv2.imshow("cropped_paper.jpg", cropped_paper)
-    contrasted_image = increase_contrast(cropped_paper)
-    cv2.imshow("contrast_enhanced.jpg", contrasted_image)
-    deskewed_image = deskew_image(contrasted_image)
+    deskewed_image = deskew_image(image_path)
     cv2.imwrite("deskewed.jpg", deskewed_image)
-    cv2.imshow("Final Output", deskewed_image)
+
+    contrasted_image = increase_contrast(deskewed_image)
+    cv2.imshow("contrast_enhanced.jpg", contrasted_image)
+
+    cropped_paper = extract_lined_paper(contrasted_image)
+    cv2.imshow("cropped_paper.jpg", cropped_paper)
+
+
+    cv2.imshow("Final Output", cropped_paper)
     cv2.waitKey(0)
 
 
