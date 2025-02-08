@@ -30,45 +30,62 @@ class ImageCapture:
         if not camera.isOpened():
             print("Cannot open camera.")
             exit()
-        self.GetFrame(camera)
+        self.Countdown(camera)
+        #userOption = self.DisplayFrame()
         self.SaveFrame()
-        userOption = -1
-        #while True:
-            # take the frame
-            # self.GetFrame(camera)
-            # display the frame
-            # userOption = self.DisplayFrame()
-            # if (userOption == 1):
-            #     self.SaveFrame()
-            #     return
-            # elif userOption == 3:
-            #     print("Bye!")
-            #     exit()
 
-    def GetFrame(self, camera):
+        # release camera and end
+        camera.release()
+
+    def Countdown(self, camera):
         # function for taking a picture, returns an image
         # the countdown
         countdownNum = self.countdownTime
+        totalTime = 0.0
         print("Get ready to take the picture!")
         print("Countdown start: ")
         print(f"...{countdownNum}...")
         countdownNum -= 1
-        startTime = time.time()
-        totalTime = 0.0
-        while countdownNum > 0:
+        while True:
             startTime = time.time()
+            success, videoFrame = camera.read()
+            # if frame is not read correctly
+            if not success:
+                print("ERROR: Could not receive frame.")
+                return
+            # display the number on the video frame
+            cv2.putText(
+                videoFrame,
+                str(countdownNum),  # text
+                (0,0),  # position of bottom left corner
+                cv2.FONT_HERSHEY_PLAIN, # font
+                3,  # font scale
+                (255,255,255,100),    # color: transparent white
+                2,  # line thickness
+                cv2.LINE_AA # line type
+            )
+            cv2.imshow('frame', videoFrame)
+            cv2.waitKey(1)
+            # decrement countdown
             if totalTime >= 1.0 and countdownNum > 0:
                 print(f"...{countdownNum}...")
                 countdownNum -= 1   # decrement
                 totalTime = 0.0     # reset
-            totalTime += time.time() - startTime
-        # access camera
-        success, self.frame = camera.read()
-        # if frame is not read correctly
-        if not success:
-            print("ERROR: Could not receive frame.")
-            return
-        print("...CAPTURED")
+            # end video loop
+            elif countdownNum <= 0:
+                # read a final frame to save
+                success, self.frame = camera.read()
+                # if frame is not read correctly
+                if not success:
+                    print("ERROR: Could not receive frame.")
+                    return
+                print("...CAPTURED")
+                # break loop
+                break
+            else:
+                totalTime += time.time() - startTime
+        # close the video window
+        cv2.destroyAllWindows()
     
     def DisplayFrame(self):
         print("Displaying image")
