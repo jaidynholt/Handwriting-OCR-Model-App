@@ -14,12 +14,12 @@ class ImageCapture:
     filename = ""
     frame = None
     # constructor
-    def __init__(self, countdownTime, filepath, filename):
+    def __init__(self, countdownTime, filepathFolder, filename):
         # Check OpenCV version
         print("OpenCV version: ", cv2.__version__)
         # initialize class variable
         self.countdownTime = countdownTime
-        self.filepath = filepath
+        self.filepathFolder = filepathFolder
         self.filename = filename
 
     def TakePhoto(self):
@@ -30,19 +30,20 @@ class ImageCapture:
         if not camera.isOpened():
             print("Cannot open camera.")
             exit()
-        
+        self.GetFrame(camera)
+        self.SaveFrame()
         userOption = -1
-        while True:
+        #while True:
             # take the frame
-            self.GetFrame(camera)
+            # self.GetFrame(camera)
             # display the frame
-            userOption = self.DisplayFrame()
-            if (userOption == 1):
-                self.SaveFrame()
-                return
-            elif userOption == 3:
-                print("Bye!")
-                exit()
+            # userOption = self.DisplayFrame()
+            # if (userOption == 1):
+            #     self.SaveFrame()
+            #     return
+            # elif userOption == 3:
+            #     print("Bye!")
+            #     exit()
 
     def GetFrame(self, camera):
         # function for taking a picture, returns an image
@@ -85,8 +86,10 @@ class ImageCapture:
             
     def SaveFrame(self):
         #change directories to where to save the file
-        os.chdir(self.filepath)
+        os.chdir(os.getcwd() + os.sep + self.filepathFolder)
         # write the frame there
         cv2.imwrite(self.filename, self.frame)
+        # change back the directory
+        os.chdir('..')
 
     
