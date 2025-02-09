@@ -10,21 +10,20 @@ model = VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-base-handwrit
 
 
 def read_image(image_path):
+    """opens and ensures image is in RGB format (trOCR likes RGB)"""
     image = Image.open(image_path).convert('RGB')
     return image
 
 
 def ocr(image, processor, model):
-    # Preprocess the image and move to the appropriate device
     pixel_values = processor(image, return_tensors='pt').pixel_values
-    # Generate predictions (token IDs)
     generated_ids = model.generate(pixel_values)
-    # Decode the generated tokens into text
     generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
     return generated_text
 
 
 def filter_text(image_path):
+    """Calls ocr function and ensures only digits, spaces and alphabetical charactors are allo"""
     image = read_image(image_path)
     text = ocr(image, processor, model)
     final_text = ""
@@ -36,19 +35,16 @@ def filter_text(image_path):
 
 
 def spellcheck(text_to_correct):
+    """ Optional function to run a spell check on outputted text - may be less effective """
     blob = TextBlob(text_to_correct)
     corrected_text = blob.correct()
     return str(corrected_text)
 
 
-# Print the OCR result in the terminal
-# print("OCR Result: ", text)
-
 
 def sort_by_pos(text_to_sort):
+    """Utilizes ntlk library to classify the part(s) of speech your word/phrase consists of"""
     tokens = nltk.word_tokenize(text_to_sort)
-
-    # Tagging parts of speech
     tags = nltk.pos_tag(tokens)
 
     # Create a dictionary to hold the words categorized by their part of speech
@@ -59,7 +55,6 @@ def sort_by_pos(text_to_sort):
             pos_dict[pos] = []
         pos_dict[pos].append(word)
 
-    # Print each part of speech tag followed by the words that belong to that tag
     for pos in pos_dict:
         definition = pos_dict2.get(pos)
         print(f"{pos} ({definition}): ")

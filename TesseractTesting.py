@@ -40,11 +40,12 @@ def deskew_image(image_path):
     edges = cv2.Canny(gray, 50, 150, apertureSize=3)
 
     # Detect lines using Hough Line Transform
-    lines = cv2.HoughLines(edges, 1, np.pi / 180, threshold=150)
+    lines = cv2.HoughLines(edges, 1, np.pi / 180, threshold=100)  # Adjusted threshold
 
     if lines is not None:
         angles = []
-        for rho, theta in lines[:, 0]:
+        for line in lines:
+            rho, theta = line[0]  # Correct unpacking
             angle = (theta * 180 / np.pi) - 90  # Convert to degrees
             if -15 < angle < 15:  # Keep only near-horizontal lines
                 angles.append(angle)
@@ -70,8 +71,8 @@ def deskew_image(image_path):
 
 def lil_extra_crop(image):
     h, w = image.shape[:2]
-    crop_x = int(w * 0.15)  # Crop 1% from the sides
-    crop_y = int(h * 0.25)  # Crop 15% from the top and bottom
+    crop_x = int(w * 0.15)
+    crop_y = int(h * 0.15)
 
     cropped = image[crop_y:h - crop_y, crop_x:w - crop_x]
     return cropped
@@ -79,7 +80,6 @@ def lil_extra_crop(image):
 
 def output_final(image_path):
     deskewed_image = deskew_image(image_path)
-
     contrasted_image = increase_contrast(deskewed_image)
     cropped_paper = extract_lined_paper(contrasted_image)
 
@@ -93,5 +93,5 @@ def output_final(image_path):
     cv2.imshow("Final Output", final_cropped)
     cv2.waitKey(0)
 
-output_final("photos\\imagecapture.jpg")
+output_final("winghack.png")
 
