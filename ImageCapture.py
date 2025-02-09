@@ -5,7 +5,7 @@ import time
 #import os for file saving
 import os
 # for getting screen size
-from win32api import GetSystemMetrics
+#from win32api import GetSystemMetrics
 import TesseractTesting as tt
 
 # class for accessing the camera, taking an image,
@@ -70,7 +70,7 @@ class ImageCapture:
                 cv2.LINE_AA # line type
             )
             cv2.namedWindow("VideoFeed", cv2.WINDOW_NORMAL)
-            cv2.resizeWindow("VideoFeed", (int)(GetSystemMetrics(0)*0.7), (int)(GetSystemMetrics(1)*0.8))
+            cv2.resizeWindow("VideoFeed", 1400, 1050)
             cv2.imshow('VideoFeed', videoFrame)
             cv2.waitKey(1)
             # decrement countdown
