@@ -79,11 +79,14 @@ class App(ctk.CTk):
             #update the page3 text
             self.pages[Page3].SetText(text, outputString)
         if (pageClass == Page4):
-            self.pages[Page4].SetText(self.CreateOutputStringFull())
+            if self.dictionaryWordCount == 0:
+                self.pages[Page4].SetText("No words so far. Please take a photo.")
+            else:
+                self.pages[Page4].SetText(self.CreateOutputStringFull())
 
     def TakePhoto(self, relativefilepath, filename):
         # the arg is the countdown time
-        imageCapture = ImageCapture(5, relativefilepath, filename)
+        imageCapture = ImageCapture(11, relativefilepath, filename)
         # take the photo, returns the photo, or if the user exited, returns -1
         imageCapture.TakePhoto()
 
@@ -103,7 +106,7 @@ class App(ctk.CTk):
         for pos in self.dictionary:
             text += str(pos) + " (" + self.dictionaryDefs[pos] + "): " + str(round(len(self.dictionary.get(pos)) / self.dictionaryWordCount * 100)) + "%\n\t"
             print(self.dictionary[pos])
-            text += (','.join(self.dictionary.get(pos))) + "\n"
+            text += (", ".join(self.dictionary.get(pos))) + "\n"
         return text
 
 
@@ -217,8 +220,9 @@ class Page3(ctk.CTkFrame):
     def SetText(self, newText, POStext):
         self.label.configure(text=newText)
         self.partsOfSpeech.configure(state="normal")
-        self.partsOfSpeech.delete("0.0")
+        self.partsOfSpeech.delete("0.0", "end")
         self.partsOfSpeech.insert("0.0", POStext)
+        self.partsOfSpeech.configure(state="disabled")
 
 # fourth window: stats
 class Page4(ctk.CTkFrame): 
@@ -245,8 +249,9 @@ class Page4(ctk.CTkFrame):
 
     def SetText(self, fullString):
         self.dataText.configure(state="normal")
-        self.dataText.delete("0.0")
+        self.dataText.delete("0.0", "end")
         self.dataText.insert("0.0", fullString)
+        self.dataText.configure(state="disabled")
 
 # standard styles for widgets
 def HeaderText(app, text):
